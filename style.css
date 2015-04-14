@@ -1,1 +1,7 @@
-style.css
+div.bar {
+	display: inline-block;
+	width: 20px;
+	height: 75px;	/* Gets overriden by D3-assigned height below */
+	background-color: teal;
+	margin-right: 2px;
+}
