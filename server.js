@@ -1,14 +1,20 @@
+// The class is translated to JS from https://github.com/HSLdevcom/navigator-server/blob/master/src/helsinki.coffee
+
 var net = require("net");
 var carrier = require("carrier");
 
-class HSLClient
 
+HSLClient = function() {
 
-	constructor = function(this.callback, this.args) {
+	HSLClient = function(callback, args) {
+		this.callback = callback;
+		this.args = args; 
 
+		// TODO bind functions?
 	}
 
-	connect = function() {
+
+	HSLClient.prototype.connect = function() {
 
 		// Connect to HSL Live server via PUSH interface
 		this.client = net.connect(808,"83.145.232.209");
@@ -35,19 +41,35 @@ class HSLClient
 
 	};
 
-	handle_error = function(error) {
-		// TODO
+	HSLClient.prototype.handle_error = function(error) {
+		if (typeof this.timeout !== "undefined" && elvis !== null) {
+			clearTimeout(this.timeout);
+		};
+		console.log("Cannot connect to HSL Live", error);
+		this.timeout = setTimeout(this.connect(), 30000);
 	};
 
-	handle_line = function(line) {
-		// TODO
+
+	HSLClient.prototype.reset_timeout = function() {
+		if (typeof this.timeout !== "undefined" && elvis !== null) {
+			clearTimeout(this.timeout);
+		};
+		this.timeout = setTimeout(this.handle_timeout, 15000);
 	};
 
-	reset_timeout = function() {
-		// TODO
+	HSLClient.prototype.handle_timeout = function() {
+		console.log("Timeout reading HSL Live data, reconnecting");
+
+		// It's ok to call on .end() when the remote end has closed
+		// the connection, so our timeout handles those cases too.
+		// .end() also clsoes the this.carrier via 'end' event.
+
+		this.client.end();
+		this.connect();
 	};
 
-	handle_timeout = function() {
+
+	HSLClient.prototype.handle_line = function(line) {
 		// TODO
 	};
-	
+};
